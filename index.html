@@ -80,7 +80,7 @@ body{background:#F5A623;min-height:100vh;display:flex;flex-direction:column}
     </div>
     <div id="finput">
       <div style="font-size:12px;color:#888;text-align:center">Type the formula — use plain numbers (e.g. H2O)</div>
-      <input id="fanswer" type="text" inputmode="text" placeholder="Your answer…" autocomplete="off" autocorrect="off" spellcheck="false">
+      <input id="fanswer" type="text" inputmode="text" placeholder="Your answer…" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
       <button id="fcheck">Check ✓</button>
     </div>
     <div id="frow">
@@ -156,14 +156,14 @@ var DATA=[
   {t:"con",q:"In an ionic compound, the overall charge is always…",a:"Zero (neutral)",x:["Positive","Negative","Equal to the cation","Variable"]},
   {t:"con",q:"The charge on an ion is called its…",a:"Valency",x:["Valence","Charge number","Electron count","Atomic number"]},
   {t:"con",q:"When a non-metal becomes an ion the name ending becomes…",a:"-ide (e.g. fluoride)",x:["-ate","-ite","-ium","-ous"]},
-  {t:"form",q:"Formula for sodium chloride",a:"NaCl",ac:["nacl"]},
-  {t:"form",q:"Formula for calcium chloride",a:"CaCl\u2082",ac:["cacl2"]},
-  {t:"form",q:"Formula for magnesium oxide",a:"MgO",ac:["mgo"]},
-  {t:"form",q:"Formula for aluminium oxide",a:"Al\u2082O\u2083",ac:["al2o3"]},
-  {t:"form",q:"Formula for sodium hydroxide",a:"NaOH",ac:["naoh"]},
-  {t:"form",q:"Formula for calcium carbonate",a:"CaCO\u2083",ac:["caco3"]},
-  {t:"form",q:"Formula for potassium nitrate",a:"KNO\u2083",ac:["kno3"]},
-  {t:"form",q:"Formula for zinc sulfate",a:"ZnSO\u2084",ac:["znso4"]},
+  {t:"form",q:"Formula for sodium chloride",a:"NaCl"},
+  {t:"form",q:"Formula for calcium chloride",a:"CaCl2"},
+  {t:"form",q:"Formula for magnesium oxide",a:"MgO"},
+  {t:"form",q:"Formula for aluminium oxide",a:"Al2O3"},
+  {t:"form",q:"Formula for sodium hydroxide",a:"NaOH"},
+  {t:"form",q:"Formula for calcium carbonate",a:"CaCO3"},
+  {t:"form",q:"Formula for potassium nitrate",a:"KNO3"},
+  {t:"form",q:"Formula for zinc sulfate",a:"ZnSO4"},
 ];
 
 var deck=[],weak=[],cur=null,done=false;
@@ -278,10 +278,14 @@ function checkFormula(){
   var fi=document.getElementById("fanswer");
   var raw=fi.value.trim();if(!raw)return;
   done=true;fi.disabled=true;document.getElementById("fcheck").disabled=true;
-  function norm(s){return s.toLowerCase().replace(/[\u2070-\u2079\u00B2\u00B3\u00B9]/g,function(c){return"0123456789"["\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079".indexOf(c)];}).replace(/\s/g,"");}
-  var ok=[].concat(cur.ac,[norm(cur.a)]).some(function(a){return a===norm(raw);});
+  function norm(s){return s.replace(/[\u2070-\u2079\u00B2\u00B3\u00B9]/g,function(c){return"0123456789"["\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079".indexOf(c)];}).replace(/\s/g,"");}
+  var normAnswer=norm(cur.a);
+  var normRaw=norm(raw);
+  var caseOk=normRaw===normAnswer;
+  var ok=normRaw.toLowerCase()===normAnswer.toLowerCase();
   var fb=document.getElementById("fb");
-  if(ok){fi.className="ok";C++;streak++;xp+=20;sxp+=20;fb.textContent="✓ Correct!";fb.className="ok";lvCheck();}
+  if(caseOk){fi.className="ok";C++;streak++;xp+=20;sxp+=20;fb.textContent="✓ Correct!";fb.className="ok";lvCheck();}
+  else if(ok){fi.className="bad";W++;streak=0;weak.push(cur);fb.textContent="✗ Check capitalisation — answer: "+cur.a;fb.className="bad";}
   else{fi.className="bad";W++;streak=0;weak.push(cur);fb.textContent="✗ Answer: "+cur.a;fb.className="bad";}
   updateStats();document.getElementById("nxt").style.display="block";
 }
