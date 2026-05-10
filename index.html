@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Ion & Valency Quiz</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:#F5A623;min-height:100vh;display:flex;flex-direction:column}
+#bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,0,0,0.12)}
+#prog-wrap{flex:1;height:6px;background:rgba(255,255,255,0.3);border-radius:3px;overflow:hidden}
+#prog{height:100%;width:0%;background:#fff;border-radius:3px;transition:width .3s}
+#lv{background:rgba(0,0,0,0.2);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px}
+#retry-bar{background:#c0392b;color:#fff;font-size:13px;font-weight:600;text-align:center;padding:6px;display:none}
+#stage{flex:1;padding:12px;display:flex;justify-content:center;align-items:flex-start}
+#card{background:#fff;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.18)}
+#qhead{padding:22px 18px 14px;text-align:center}
+#badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 10px;border-radius:20px;margin-bottom:8px}
+.bpos{background:#E1F5EE;color:#0F6E56}
+.bneg{background:#FAECE7;color:#993C1D}
+.bcon{background:#EEEDFE;color:#3C3489}
+.bform{background:#FEF3E2;color:#854F0B}
+#qtext{font-size:21px;font-weight:700;color:#111;line-height:1.3}
+#qsub{font-size:12px;color:#999;margin-top:5px}
+#grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#d0d0d0;border-top:2px solid #d0d0d0}
+.opt{background:#f0f0f0;padding:18px 12px;display:flex;align-items:flex-start;gap:8px;min-height:90px;cursor:pointer}
+.opt:active{background:#e0e0e0}
+.opt.ok{background:#d4edda}.opt.bad{background:#f8d7da}.opt.show{background:#d4edda}
+.num{width:20px;height:20px;border-radius:4px;background:#ccc;color:#555;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.opt.ok .num,.opt.show .num{background:#28a745;color:#fff}
+.opt.bad .num{background:#dc3545;color:#fff}
+.txt{font-size:14px;color:#333;line-height:1.35}
+.opt.ok .txt,.opt.show .txt{color:#155724;font-weight:600}
+.opt.bad .txt{color:#721c24}
+#finput{padding:16px 18px 20px;display:none;flex-direction:column;align-items:center;gap:10px;border-top:2px solid #eee}
+#fanswer{font-size:20px;padding:12px 14px;border:2px solid #ddd;border-radius:10px;width:100%;text-align:center;background:#fff;color:#222;outline:none;-webkit-appearance:none}
+#fanswer.ok{border-color:#28a745;background:#d4edda;color:#155724}
+#fanswer.bad{border-color:#dc3545;background:#f8d7da;color:#721c24}
+#fcheck{background:#F5A623;color:#fff;border:none;border-radius:10px;padding:13px;font-size:16px;font-weight:700;width:100%;-webkit-appearance:none;cursor:pointer}
+#frow{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;min-height:48px;border-top:1px solid #eee}
+#fb{font-size:13px;font-weight:600;flex:1;padding-right:8px}
+.ok{color:#155724}.bad{color:#721c24}
+#nxt{background:#F5A623;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;display:none;-webkit-appearance:none}
+#stats{display:flex;border-top:1px solid #eee}
+.st{flex:1;text-align:center;padding:9px 2px;border-right:1px solid #eee}
+.st:last-child{border-right:none}
+.sv{font-size:17px;font-weight:700;color:#333}
+.sl{font-size:10px;color:#aaa;margin-top:2px}
+#done{display:none;flex-direction:column;align-items:center;padding:28px 18px;text-align:center}
+#done h2{font-size:22px;font-weight:700;color:#222;margin-bottom:6px}
+#done p{font-size:13px;color:#777;margin-bottom:18px}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin-bottom:20px}
+.dc{background:#f5f5f5;border-radius:10px;padding:12px}
+.dv{font-size:22px;font-weight:700;color:#333}
+.dl{font-size:11px;color:#aaa;margin-top:2px}
+.dbtn{display:block;width:100%;border:none;border-radius:11px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:8px;-webkit-appearance:none}
+.dbtn:last-child{margin-bottom:0}
+.amber{background:#F5A623;color:#fff}
+.red{background:#dc3545;color:#fff}
+</style>
+</head>
+<body>
+<div id="bar">
+  <div id="prog-wrap"><div id="prog"></div></div>
+  <div id="lv">Lv 1 · 0 XP</div>
+</div>
+<div id="retry-bar">🔁 Retesting cards you missed</div>
+<div id="stage">
+  <div id="card">
+    <div id="qhead">
+      <div id="badge" class="bpos">loading</div>
+      <div id="qtext">Getting ready…</div>
+      <div id="qsub"></div>
+    </div>
+    <div id="grid">
+      <div class="opt" id="o0"><div class="num">1</div><div class="txt"></div></div>
+      <div class="opt" id="o1"><div class="num">2</div><div class="txt"></div></div>
+      <div class="opt" id="o2"><div class="num">3</div><div class="txt"></div></div>
+      <div class="opt" id="o3"><div class="num">4</div><div class="txt"></div></div>
+    </div>
+    <div id="finput">
+      <div style="font-size:12px;color:#888;text-align:center">Type the formula — use plain numbers (e.g. H2O)</div>
+      <input id="fanswer" type="text" inputmode="text" placeholder="Your answer…" autocomplete="off" autocorrect="off" spellcheck="false">
+      <button id="fcheck">Check ✓</button>
+    </div>
+    <div id="frow">
+      <div id="fb"></div>
+      <button id="nxt">Next →</button>
+    </div>
+    <div id="stats">
+      <div class="st"><div class="sv" id="sc">0</div><div class="sl">correct</div></div>
+      <div class="st"><div class="sv" id="sr">0</div><div class="sl">retry</div></div>
+      <div class="st"><div class="sv" id="ss">0</div><div class="sl">streak 🔥</div></div>
+      <div class="st"><div class="sv" id="sa">—</div><div class="sl">accuracy</div></div>
+    </div>
+    <div id="done">
+      <div style="font-size:44px;margin-bottom:8px">🎉</div>
+      <h2>Session complete!</h2>
+      <p id="dsub"></p>
+      <div class="dg">
+        <div class="dc"><div class="dv" id="dc1">0</div><div class="dl">correct</div></div>
+        <div class="dc"><div class="dv" id="dc2">0</div><div class="dl">wrong</div></div>
+        <div class="dc"><div class="dv" id="dc3">—</div><div class="dl">accuracy</div></div>
+        <div class="dc"><div class="dv" id="dc4">0</div><div class="dl">XP earned</div></div>
+      </div>
+      <button class="dbtn red" id="d-retry" style="display:none">Retry missed cards</button>
+      <button class="dbtn amber" id="d-again">Play again</button>
+    </div>
+  </div>
+</div>
+<script>
+var DATA=[
+  {t:"pos",q:"Hydrogen",a:"H\u207A",x:["Na\u207A","K\u207A","Li\u207A","Ag\u207A"]},
+  {t:"pos",q:"Sodium",a:"Na\u207A",x:["K\u207A","Li\u207A","H\u207A","Ag\u207A"]},
+  {t:"pos",q:"Potassium",a:"K\u207A",x:["Na\u207A","Li\u207A","Ag\u207A","H\u207A"]},
+  {t:"pos",q:"Silver",a:"Ag\u207A",x:["Cu\u207A","H\u207A","Na\u207A","K\u207A"]},
+  {t:"pos",q:"Copper (I)",a:"Cu\u207A",x:["Ag\u207A","Cu\u00B2\u207A","Na\u207A","K\u207A"]},
+  {t:"pos",q:"Lithium",a:"Li\u207A",x:["Na\u207A","K\u207A","H\u207A","Ag\u207A"]},
+  {t:"pos",q:"Ammonium",a:"NH\u2084\u207A",x:["Na\u207A","K\u207A","Li\u207A","H\u207A"]},
+  {t:"pos",q:"Iron (II)",a:"Fe\u00B2\u207A",x:["Fe\u00B3\u207A","Co\u00B2\u207A","Zn\u00B2\u207A","Ca\u00B2\u207A"]},
+  {t:"pos",q:"Calcium",a:"Ca\u00B2\u207A",x:["Ba\u00B2\u207A","Mg\u00B2\u207A","Fe\u00B2\u207A","Co\u00B2\u207A"]},
+  {t:"pos",q:"Barium",a:"Ba\u00B2\u207A",x:["Ca\u00B2\u207A","Mg\u00B2\u207A","Co\u00B2\u207A","Fe\u00B2\u207A"]},
+  {t:"pos",q:"Magnesium",a:"Mg\u00B2\u207A",x:["Ca\u00B2\u207A","Ba\u00B2\u207A","Zn\u00B2\u207A","Fe\u00B2\u207A"]},
+  {t:"pos",q:"Cobalt",a:"Co\u00B2\u207A",x:["Cu\u00B2\u207A","Zn\u00B2\u207A","Fe\u00B2\u207A","Ca\u00B2\u207A"]},
+  {t:"pos",q:"Zinc",a:"Zn\u00B2\u207A",x:["Co\u00B2\u207A","Cu\u00B2\u207A","Mg\u00B2\u207A","Fe\u00B2\u207A"]},
+  {t:"pos",q:"Lead (II)",a:"Pb\u00B2\u207A",x:["Sn\u00B2\u207A","Pb\u2074\u207A","Cu\u00B2\u207A","Co\u00B2\u207A"]},
+  {t:"pos",q:"Tin (II)",a:"Sn\u00B2\u207A",x:["Pb\u00B2\u207A","Sn\u2074\u207A","Zn\u00B2\u207A","Co\u00B2\u207A"]},
+  {t:"pos",q:"Copper (II)",a:"Cu\u00B2\u207A",x:["Cu\u207A","Co\u00B2\u207A","Zn\u00B2\u207A","Fe\u00B2\u207A"]},
+  {t:"pos",q:"Aluminium",a:"Al\u00B3\u207A",x:["Cr\u00B3\u207A","Fe\u00B3\u207A","Sn\u2074\u207A","Pb\u2074\u207A"]},
+  {t:"pos",q:"Chromium (III)",a:"Cr\u00B3\u207A",x:["Al\u00B3\u207A","Fe\u00B3\u207A","Co\u00B2\u207A","Sn\u2074\u207A"]},
+  {t:"pos",q:"Iron (III)",a:"Fe\u00B3\u207A",x:["Fe\u00B2\u207A","Cr\u00B3\u207A","Al\u00B3\u207A","Co\u00B2\u207A"]},
+  {t:"pos",q:"Tin (IV)",a:"Sn\u2074\u207A",x:["Sn\u00B2\u207A","Pb\u2074\u207A","Al\u00B3\u207A","Fe\u00B3\u207A"]},
+  {t:"pos",q:"Lead (IV)",a:"Pb\u2074\u207A",x:["Pb\u00B2\u207A","Sn\u2074\u207A","Cr\u00B3\u207A","Al\u00B3\u207A"]},
+  {t:"neg",q:"Fluoride",a:"F\u207B",x:["Cl\u207B","Br\u207B","I\u207B","OH\u207B"]},
+  {t:"neg",q:"Chloride",a:"Cl\u207B",x:["F\u207B","Br\u207B","I\u207B","OH\u207B"]},
+  {t:"neg",q:"Bromide",a:"Br\u207B",x:["Cl\u207B","I\u207B","F\u207B","OH\u207B"]},
+  {t:"neg",q:"Iodide",a:"I\u207B",x:["Br\u207B","Cl\u207B","F\u207B","OH\u207B"]},
+  {t:"neg",q:"Hydrogencarbonate",a:"HCO\u2083\u207B",x:["HSO\u2084\u207B","OH\u207B","NO\u2083\u207B","Cl\u207B"]},
+  {t:"neg",q:"Hydrogensulfate",a:"HSO\u2084\u207B",x:["HCO\u2083\u207B","OH\u207B","NO\u2083\u207B","Cl\u207B"]},
+  {t:"neg",q:"Hydroxide",a:"OH\u207B",x:["HCO\u2083\u207B","NO\u2083\u207B","F\u207B","Cl\u207B"]},
+  {t:"neg",q:"Ethanoate",a:"CH\u2083COO\u207B",x:["OH\u207B","NO\u2083\u207B","HCO\u2083\u207B","Cl\u207B"]},
+  {t:"neg",q:"Nitrate",a:"NO\u2083\u207B",x:["OH\u207B","HCO\u2083\u207B","HSO\u2084\u207B","Cl\u207B"]},
+  {t:"neg",q:"Oxide",a:"O\u00B2\u207B",x:["S\u00B2\u207B","SO\u2083\u00B2\u207B","CO\u2083\u00B2\u207B","N\u00B3\u207B"]},
+  {t:"neg",q:"Sulfide",a:"S\u00B2\u207B",x:["O\u00B2\u207B","SO\u2084\u00B2\u207B","CO\u2083\u00B2\u207B","N\u00B3\u207B"]},
+  {t:"neg",q:"Sulfite",a:"SO\u2083\u00B2\u207B",x:["SO\u2084\u00B2\u207B","S\u00B2\u207B","CO\u2083\u00B2\u207B","O\u00B2\u207B"]},
+  {t:"neg",q:"Sulfate",a:"SO\u2084\u00B2\u207B",x:["SO\u2083\u00B2\u207B","CO\u2083\u00B2\u207B","S\u00B2\u207B","O\u00B2\u207B"]},
+  {t:"neg",q:"Carbonate",a:"CO\u2083\u00B2\u207B",x:["SO\u2084\u00B2\u207B","SO\u2083\u00B2\u207B","PO\u2084\u00B3\u207B","S\u00B2\u207B"]},
+  {t:"neg",q:"Nitride",a:"N\u00B3\u207B",x:["P\u00B3\u207B","O\u00B2\u207B","S\u00B2\u207B","CO\u2083\u00B2\u207B"]},
+  {t:"neg",q:"Phosphide",a:"P\u00B3\u207B",x:["N\u00B3\u207B","O\u00B2\u207B","PO\u2084\u00B3\u207B","CO\u2083\u00B2\u207B"]},
+  {t:"neg",q:"Phosphate",a:"PO\u2084\u00B3\u207B",x:["CO\u2083\u00B2\u207B","SO\u2084\u00B2\u207B","P\u00B3\u207B","N\u00B3\u207B"]},
+  {t:"con",q:"What happens when a positive ion forms?",a:"Electrons are lost",x:["Electrons are gained","Protons are lost","Neutrons are shared","Electrons are shared"]},
+  {t:"con",q:"What happens when a negative ion forms?",a:"Electrons are gained",x:["Electrons are lost","Protons are gained","Neutrons are lost","Electrons are shared"]},
+  {t:"con",q:"Why are noble gases unreactive?",a:"Their outer energy level is full",x:["They have no electrons","They have too many protons","They are too large","They repel all atoms"]},
+  {t:"con",q:"Metals tend to form… ions",a:"Positive",x:["Negative","Neutral","Covalent","Metallic"]},
+  {t:"con",q:"Non-metals tend to form… ions",a:"Negative",x:["Positive","Neutral","Covalent","Metallic"]},
+  {t:"con",q:"In an ionic compound, the overall charge is always…",a:"Zero (neutral)",x:["Positive","Negative","Equal to the cation","Variable"]},
+  {t:"con",q:"The charge on an ion is called its…",a:"Valency",x:["Valence","Charge number","Electron count","Atomic number"]},
+  {t:"con",q:"When a non-metal becomes an ion the name ending becomes…",a:"-ide (e.g. fluoride)",x:["-ate","-ite","-ium","-ous"]},
+  {t:"form",q:"Formula for sodium chloride",a:"NaCl",ac:["nacl"]},
+  {t:"form",q:"Formula for calcium chloride",a:"CaCl\u2082",ac:["cacl2"]},
+  {t:"form",q:"Formula for magnesium oxide",a:"MgO",ac:["mgo"]},
+  {t:"form",q:"Formula for aluminium oxide",a:"Al\u2082O\u2083",ac:["al2o3"]},
+  {t:"form",q:"Formula for sodium hydroxide",a:"NaOH",ac:["naoh"]},
+  {t:"form",q:"Formula for calcium carbonate",a:"CaCO\u2083",ac:["caco3"]},
+  {t:"form",q:"Formula for potassium nitrate",a:"KNO\u2083",ac:["kno3"]},
+  {t:"form",q:"Formula for zinc sulfate",a:"ZnSO\u2084",ac:["znso4"]},
+];
+
+var deck=[],weak=[],cur=null,done=false;
+var C=0,W=0,streak=0,xp=0,lv=1,sxp=0;
+
+function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+function start(){
+  deck=shuf(DATA.slice());
+  weak=[];C=0;W=0;streak=0;sxp=0;
+  document.getElementById("done").style.display="none";
+  document.getElementById("qhead").style.display="block";
+  document.getElementById("grid").style.display="grid";
+  document.getElementById("frow").style.display="flex";
+  document.getElementById("stats").style.display="flex";
+  document.getElementById("retry-bar").style.display="none";
+  document.getElementById("finput").style.display="none";
+  updateStats();
+  next();
+}
+
+function next(){
+  done=false;
+  document.getElementById("nxt").style.display="none";
+  document.getElementById("fb").textContent="";
+  document.getElementById("fb").className="";
+
+  if(!deck.length&&!weak.length){finish();return;}
+  if(!deck.length){deck=shuf(weak.slice());weak=[];document.getElementById("retry-bar").style.display="block";}
+
+  cur=deck.shift();
+  updateProg();
+
+  var bmap={pos:"bpos positive ion",neg:"bneg negative ion",con:"bcon ion theory",form:"bform formula writing"};
+  var bp=bmap[cur.t].split(" ");
+  var badge=document.getElementById("badge");
+  badge.className=bp[0];badge.textContent=bp.slice(1).join(" ");
+
+  cur._flip=false;
+  var qt,qs="";
+  if(cur.t==="form"||cur.t==="con"){qt=cur.q;qs=cur.t==="form"?"Formula Writing":"Ion Theory";}
+  else{var ns=Math.random()<0.5;qt=ns?cur.q:cur.a;qs=ns?"What is the symbol?":"What is the name?";cur._flip=!ns;}
+  document.getElementById("qtext").textContent=qt;
+  document.getElementById("qsub").textContent=qs;
+
+  if(cur.t==="form"){
+    document.getElementById("grid").style.display="none";
+    document.getElementById("finput").style.display="flex";
+    var fi=document.getElementById("fanswer");
+    fi.value="";fi.className="";fi.disabled=false;
+    document.getElementById("fcheck").disabled=false;
+  } else {
+    document.getElementById("grid").style.display="grid";
+    document.getElementById("finput").style.display="none";
+    var correct,dists;
+    if(cur.t==="con"){correct=cur.a;dists=shuf(cur.x.slice()).slice(0,3);}
+    else if(cur._flip){
+      correct=cur.q;
+      var pool=DATA.filter(function(c){return c!==cur&&(c.t==="pos"||c.t==="neg");});
+      dists=shuf(pool).map(function(c){return c.q;}).slice(0,3);
+    } else {correct=cur.a;dists=shuf(cur.x.slice()).slice(0,3);}
+    var opts=shuf([correct,dists[0],dists[1],dists[2]]);
+    cur._ca=correct;
+    for(var i=0;i<4;i++){
+      var el=document.getElementById("o"+i);
+      el.className="opt";
+      el.querySelector(".txt").textContent=opts[i]||"";
+      el.dataset.val=opts[i]||"";
+    }
+    bindOpts(correct);
+  }
+}
+
+function bindOpts(correct){
+  for(var i=0;i<4;i++){
+    (function(el){
+      var newEl=el.cloneNode(true);
+      el.parentNode.replaceChild(newEl,el);
+      function handle(e){
+        if(e.type==="touchend")e.preventDefault();
+        pick(newEl,newEl.dataset.val,correct);
+      }
+      newEl.addEventListener("touchend",handle,{passive:false});
+      newEl.addEventListener("click",handle);
+    })(document.getElementById("o"+i));
+  }
+}
+
+function pick(el,chosen,correct){
+  if(done)return;done=true;
+  for(var i=0;i<4;i++){
+    var t=document.getElementById("o"+i);
+    if(t.dataset.val===correct)t.classList.add("show");
+  }
+  var fb=document.getElementById("fb");
+  if(chosen===correct){
+    el.classList.add("ok");el.classList.remove("show");
+    C++;streak++;var bonus=streak>=3?5:0;xp+=15+bonus;sxp+=15+bonus;
+    fb.textContent=streak>=3?"✓ "+streak+" streak! +"+(15+bonus)+" XP":"✓ Correct!";
+    fb.className="ok";lvCheck();
+  } else {
+    el.classList.add("bad");
+    W++;streak=0;weak.push(cur);
+    fb.textContent="✗ Answer: "+correct;fb.className="bad";
+  }
+  updateStats();
+  document.getElementById("nxt").style.display="block";
+}
+
+function checkFormula(){
+  if(done)return;
+  var fi=document.getElementById("fanswer");
+  var raw=fi.value.trim();if(!raw)return;
+  done=true;fi.disabled=true;document.getElementById("fcheck").disabled=true;
+  function norm(s){return s.toLowerCase().replace(/[\u2070-\u2079\u00B2\u00B3\u00B9]/g,function(c){return"0123456789"["\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079".indexOf(c)];}).replace(/\s/g,"");}
+  var ok=[].concat(cur.ac,[norm(cur.a)]).some(function(a){return a===norm(raw);});
+  var fb=document.getElementById("fb");
+  if(ok){fi.className="ok";C++;streak++;xp+=20;sxp+=20;fb.textContent="✓ Correct!";fb.className="ok";lvCheck();}
+  else{fi.className="bad";W++;streak=0;weak.push(cur);fb.textContent="✗ Answer: "+cur.a;fb.className="bad";}
+  updateStats();document.getElementById("nxt").style.display="block";
+}
+
+function lvCheck(){while(xp>=lv*100){xp-=lv*100;lv++;}document.getElementById("lv").textContent="Lv "+lv+" · "+xp+" XP";}
+function updateStats(){
+  document.getElementById("sc").textContent=C;
+  document.getElementById("sr").textContent=weak.length;
+  document.getElementById("ss").textContent=streak;
+  var tot=C+W;document.getElementById("sa").textContent=tot?Math.round(C/tot*100)+"%":"—";
+}
+function updateProg(){
+  var tot=C+W+deck.length+1;
+  document.getElementById("prog").style.width=Math.round((C+W)/tot*100)+"%";
+}
+function finish(){
+  document.getElementById("qhead").style.display="none";
+  document.getElementById("grid").style.display="none";
+  document.getElementById("finput").style.display="none";
+  document.getElementById("frow").style.display="none";
+  document.getElementById("stats").style.display="none";
+  document.getElementById("done").style.display="flex";
+  var tot=C+W;
+  document.getElementById("dc1").textContent=C;
+  document.getElementById("dc2").textContent=W;
+  document.getElementById("dc3").textContent=tot?Math.round(C/tot*100)+"%":"—";
+  document.getElementById("dc4").textContent=sxp;
+  document.getElementById("dsub").textContent="Level "+lv+" · "+tot+" cards";
+  var dr=document.getElementById("d-retry");
+  dr.style.display=weak.length?"block":"none";
+  if(weak.length)dr.textContent="Retry "+weak.length+" missed card"+(weak.length>1?"s":"");
+  document.getElementById("prog").style.width="100%";
+}
+
+// wire buttons — both touchend and click
+function wire(id,fn){
+  var el=document.getElementById(id);
+  el.addEventListener("touchend",function(e){e.preventDefault();fn();},{passive:false});
+  el.addEventListener("click",fn);
+}
+wire("nxt",next);
+wire("fcheck",checkFormula);
+wire("d-again",start);
+wire("d-retry",function(){
+  deck=shuf(weak.slice());weak=[];
+  document.getElementById("done").style.display="none";
+  document.getElementById("qhead").style.display="block";
+  document.getElementById("grid").style.display="grid";
+  document.getElementById("frow").style.display="flex";
+  document.getElementById("stats").style.display="flex";
+  document.getElementById("retry-bar").style.display="block";
+  document.getElementById("finput").style.display="none";
+  next();
+});
+document.getElementById("fanswer").addEventListener("keydown",function(e){if(e.key==="Enter")checkFormula();});
+
+start();
+</script>
+</body>
+</html>
