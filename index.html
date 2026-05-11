@@ -7,13 +7,18 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
 body{background:#F5A623;min-height:100vh;display:flex;flex-direction:column}
-#bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,0,0,0.12)}
+
+#bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,0,0,0.12);flex-shrink:0}
 #prog-wrap{flex:1;height:6px;background:rgba(255,255,255,0.3);border-radius:3px;overflow:hidden}
 #prog{height:100%;width:0%;background:#fff;border-radius:3px;transition:width .3s}
-#lv{background:rgba(0,0,0,0.2);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px}
+#lv{background:rgba(0,0,0,0.2);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}
+#teacher-toggle{background:rgba(0,0,0,0.18);color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer}
+
+#quiz-view{flex:1;display:flex;flex-direction:column}
 #retry-bar{background:#c0392b;color:#fff;font-size:13px;font-weight:600;text-align:center;padding:6px;display:none}
 #stage{flex:1;padding:12px;display:flex;justify-content:center;align-items:flex-start}
 #card{background:#fff;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.18)}
+
 #qhead{padding:22px 18px 14px;text-align:center}
 #badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 10px;border-radius:20px;margin-bottom:8px}
 .bpos{background:#E1F5EE;color:#0F6E56}
@@ -22,6 +27,7 @@ body{background:#F5A623;min-height:100vh;display:flex;flex-direction:column}
 .bform{background:#FEF3E2;color:#854F0B}
 #qtext{font-size:21px;font-weight:700;color:#111;line-height:1.3}
 #qsub{font-size:12px;color:#999;margin-top:5px}
+
 #grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#d0d0d0;border-top:2px solid #d0d0d0}
 .opt{background:#f0f0f0;padding:18px 12px;display:flex;align-items:flex-start;gap:8px;min-height:90px;cursor:pointer}
 .opt:active{background:#e0e0e0}
@@ -32,23 +38,30 @@ body{background:#F5A623;min-height:100vh;display:flex;flex-direction:column}
 .txt{font-size:14px;color:#333;line-height:1.35}
 .opt.ok .txt,.opt.show .txt{color:#155724;font-weight:600}
 .opt.bad .txt{color:#721c24}
+
 #finput{padding:16px 18px 20px;display:none;flex-direction:column;align-items:center;gap:10px;border-top:2px solid #eee}
 #fanswer{font-size:20px;padding:12px 14px;border:2px solid #ddd;border-radius:10px;width:100%;text-align:center;background:#fff;color:#222;outline:none;-webkit-appearance:none}
 #fanswer.ok{border-color:#28a745;background:#d4edda;color:#155724}
 #fanswer.bad{border-color:#dc3545;background:#f8d7da;color:#721c24}
 #fcheck{background:#F5A623;color:#fff;border:none;border-radius:10px;padding:13px;font-size:16px;font-weight:700;width:100%;-webkit-appearance:none;cursor:pointer}
-#frow{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;min-height:48px;border-top:1px solid #eee}
-#fb{font-size:13px;font-weight:600;flex:1;padding-right:8px}
-.ok{color:#155724}.bad{color:#721c24}
-#nxt{background:#F5A623;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;display:none;-webkit-appearance:none}
+
+#frow{padding:10px 14px;display:flex;align-items:flex-start;justify-content:space-between;min-height:48px;border-top:1px solid #eee;gap:8px}
+#fb-wrap{flex:1;display:flex;flex-direction:column;gap:4px}
+#fb{font-size:13px;font-weight:600}
+#fnote{font-size:12px;color:#666;line-height:1.5;display:none;padding-top:2px}
+.fbok{color:#155724}.fbbad{color:#721c24}
+#nxt{background:#F5A623;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;display:none;-webkit-appearance:none;flex-shrink:0;align-self:center}
+
 #stats{display:flex;border-top:1px solid #eee}
 .st{flex:1;text-align:center;padding:9px 2px;border-right:1px solid #eee}
 .st:last-child{border-right:none}
 .sv{font-size:17px;font-weight:700;color:#333}
 .sl{font-size:10px;color:#aaa;margin-top:2px}
-#done{display:none;flex-direction:column;align-items:center;padding:28px 18px;text-align:center}
-#done h2{font-size:22px;font-weight:700;color:#222;margin-bottom:6px}
-#done p{font-size:13px;color:#777;margin-bottom:18px}
+
+/* ── level summary + final complete (shared styles) ── */
+#level-summary,#done{display:none;flex-direction:column;align-items:center;padding:28px 18px;text-align:center}
+#level-summary h2,#done h2{font-size:22px;font-weight:700;color:#222;margin-bottom:6px}
+#level-summary p,#done p{font-size:13px;color:#777;margin-bottom:18px}
 .dg{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin-bottom:20px}
 .dc{background:#f5f5f5;border-radius:10px;padding:12px}
 .dv{font-size:22px;font-weight:700;color:#333}
@@ -57,148 +70,324 @@ body{background:#F5A623;min-height:100vh;display:flex;flex-direction:column}
 .dbtn:last-child{margin-bottom:0}
 .amber{background:#F5A623;color:#fff}
 .red{background:#dc3545;color:#fff}
+.green{background:#28a745;color:#fff}
+
+/* level badge on summary */
+.lv-badge{font-size:48px;margin-bottom:8px}
+.lv-tag{display:inline-block;background:#F5A623;color:#fff;font-size:13px;font-weight:700;padding:4px 16px;border-radius:20px;margin-bottom:12px}
+.unlock-msg{font-size:13px;color:#28a745;font-weight:600;margin-bottom:16px;padding:10px 14px;background:#d4edda;border-radius:10px;width:100%}
+
+/* ── teacher view ── */
+#teacher-view{display:none;flex:1;flex-direction:column;background:#f7f7f7}
+#tv-toolbar{background:#fff;border-bottom:1px solid #eee;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}
+#tv-toolbar h2{font-size:16px;font-weight:700;color:#222}
+#tv-toolbar-right{display:flex;gap:8px}
+.tv-btn{border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+.tv-btn.amber{background:#F5A623;color:#fff}
+.tv-btn.green{background:#28a745;color:#fff}
+.tv-btn.gray{background:#eee;color:#555}
+#tv-scroll{flex:1;overflow-y:auto;padding:12px 14px}
+
+.qcard{background:#fff;border-radius:12px;margin-bottom:12px;overflow:hidden;border:1px solid #e8e8e8}
+.qcard-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f9f9f9;border-bottom:1px solid #eee;cursor:pointer;gap:8px}
+.qcard-num{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
+.qcard-preview{font-size:13px;color:#555;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qcard-lv{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#FEF9EE;color:#c17f00;flex-shrink:0}
+.qcard-del{background:#f8d7da;border:none;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:700;color:#721c24;cursor:pointer;flex-shrink:0}
+.qcard-body{padding:12px 14px;display:none;flex-direction:column;gap:10px}
+.qcard-body.open{display:flex}
+.field-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.field-input{width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;background:#fff;color:#222;outline:none;-webkit-appearance:none;font-family:inherit}
+.field-input:focus{border-color:#F5A623}
+textarea.field-input{resize:vertical;min-height:60px;line-height:1.4}
+.type-pills{display:flex;gap:6px;flex-wrap:wrap}
+.type-pill{border:1.5px solid #e0e0e0;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;color:#888;cursor:pointer;background:#fff}
+.type-pill.active{border-color:#F5A623;background:#FEF9EE;color:#c17f00}
+.lv-pills{display:flex;gap:6px;flex-wrap:wrap}
+.lv-pill{border:1.5px solid #e0e0e0;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;color:#888;cursor:pointer;background:#fff}
+.lv-pill.active{border-color:#3c87d4;background:#e8f4ff;color:#1a5fa8}
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt-wrap{display:flex;flex-direction:column;gap:4px}
+#add-btn{display:block;width:100%;background:#fff;border:2px dashed #F5A623;border-radius:10px;padding:13px;font-size:14px;font-weight:700;color:#F5A623;cursor:pointer;text-align:center;margin-top:4px;margin-bottom:16px}
 </style>
 </head>
 <body>
+
 <div id="bar">
   <div id="prog-wrap"><div id="prog"></div></div>
-  <div id="lv">Lv 1 · 0 XP</div>
+  <div id="lv">Level 1</div>
+  <button id="teacher-toggle">✏ Teacher</button>
 </div>
-<div id="retry-bar">🔁 Retesting cards you missed</div>
-<div id="stage">
-  <div id="card">
-    <div id="qhead">
-      <div id="badge" class="bpos">loading</div>
-      <div id="qtext">Getting ready…</div>
-      <div id="qsub"></div>
-    </div>
-    <div id="grid">
-      <div class="opt" id="o0"><div class="num">1</div><div class="txt"></div></div>
-      <div class="opt" id="o1"><div class="num">2</div><div class="txt"></div></div>
-      <div class="opt" id="o2"><div class="num">3</div><div class="txt"></div></div>
-      <div class="opt" id="o3"><div class="num">4</div><div class="txt"></div></div>
-    </div>
-    <div id="finput">
-      <div style="font-size:12px;color:#888;text-align:center">Type the formula — use plain numbers (e.g. H2O)</div>
-      <input id="fanswer" type="text" inputmode="text" placeholder="Your answer…" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
-      <button id="fcheck">Check ✓</button>
-    </div>
-    <div id="frow">
-      <div id="fb"></div>
-      <button id="nxt">Next →</button>
-    </div>
-    <div id="stats">
-      <div class="st"><div class="sv" id="sc">0</div><div class="sl">correct</div></div>
-      <div class="st"><div class="sv" id="sr">0</div><div class="sl">retry</div></div>
-      <div class="st"><div class="sv" id="ss">0</div><div class="sl">streak 🔥</div></div>
-      <div class="st"><div class="sv" id="sa">—</div><div class="sl">accuracy</div></div>
-    </div>
-    <div id="done">
-      <div style="font-size:44px;margin-bottom:8px">🎉</div>
-      <h2>Session complete!</h2>
-      <p id="dsub"></p>
-      <div class="dg">
-        <div class="dc"><div class="dv" id="dc1">0</div><div class="dl">correct</div></div>
-        <div class="dc"><div class="dv" id="dc2">0</div><div class="dl">wrong</div></div>
-        <div class="dc"><div class="dv" id="dc3">—</div><div class="dl">accuracy</div></div>
-        <div class="dc"><div class="dv" id="dc4">0</div><div class="dl">XP earned</div></div>
+
+<div id="quiz-view">
+  <div id="retry-bar">🔁 Retesting cards you missed</div>
+  <div id="stage">
+    <div id="card">
+      <div id="qhead">
+        <div id="badge" class="bpos">loading</div>
+        <div id="qtext">Getting ready…</div>
+        <div id="qsub"></div>
       </div>
-      <button class="dbtn red" id="d-retry" style="display:none">Retry missed cards</button>
-      <button class="dbtn amber" id="d-again">Play again</button>
+      <div id="grid">
+        <div class="opt" id="o0"><div class="num">1</div><div class="txt"></div></div>
+        <div class="opt" id="o1"><div class="num">2</div><div class="txt"></div></div>
+        <div class="opt" id="o2"><div class="num">3</div><div class="txt"></div></div>
+        <div class="opt" id="o3"><div class="num">4</div><div class="txt"></div></div>
+      </div>
+      <div id="finput">
+        <div style="font-size:12px;color:#888;text-align:center">Type the formula — use plain numbers (e.g. H2O)</div>
+        <input id="fanswer" type="text" inputmode="text" placeholder="Your answer…" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+        <button id="fcheck">Check ✓</button>
+      </div>
+      <div id="frow">
+        <div id="fb-wrap">
+          <div id="fb"></div>
+          <div id="fnote"></div>
+        </div>
+        <button id="nxt">Next →</button>
+      </div>
+      <div id="stats">
+        <div class="st"><div class="sv" id="sc">0</div><div class="sl">correct</div></div>
+        <div class="st"><div class="sv" id="sr">0</div><div class="sl">retry</div></div>
+        <div class="st"><div class="sv" id="ss">0</div><div class="sl">streak 🔥</div></div>
+        <div class="st"><div class="sv" id="sa">—</div><div class="sl">accuracy</div></div>
+      </div>
+
+      <!-- level summary -->
+      <div id="level-summary">
+        <div class="lv-badge" id="ls-emoji">⭐</div>
+        <div class="lv-tag" id="ls-tag">Level 1 Complete!</div>
+        <h2 id="ls-title">Nice work!</h2>
+        <div class="dg">
+          <div class="dc"><div class="dv" id="ls-c">0</div><div class="dl">correct</div></div>
+          <div class="dc"><div class="dv" id="ls-w">0</div><div class="dl">wrong</div></div>
+          <div class="dc"><div class="dv" id="ls-acc">—</div><div class="dl">accuracy</div></div>
+          <div class="dc"><div class="dv" id="ls-xp">0</div><div class="dl">XP earned</div></div>
+        </div>
+        <div class="unlock-msg" id="ls-unlock"></div>
+        <button class="dbtn green" id="ls-next">Next Level →</button>
+        <button class="dbtn amber" id="ls-retry">Retry this level</button>
+      </div>
+
+      <!-- final done -->
+      <div id="done">
+        <div style="font-size:44px;margin-bottom:8px">🏆</div>
+        <h2>All levels complete!</h2>
+        <p id="dsub"></p>
+        <div class="dg">
+          <div class="dc"><div class="dv" id="dc1">0</div><div class="dl">correct</div></div>
+          <div class="dc"><div class="dv" id="dc2">0</div><div class="dl">wrong</div></div>
+          <div class="dc"><div class="dv" id="dc3">—</div><div class="dl">accuracy</div></div>
+          <div class="dc"><div class="dv" id="dc4">0</div><div class="dl">XP earned</div></div>
+        </div>
+        <button class="dbtn amber" id="d-again">Play again from Level 1</button>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- teacher view -->
+<div id="teacher-view">
+  <div id="tv-toolbar">
+    <h2>✏ Question Editor</h2>
+    <div id="tv-toolbar-right">
+      <button class="tv-btn gray" id="tv-cancel">Cancel</button>
+      <button class="tv-btn green" id="tv-save">Save & Play</button>
+    </div>
+  </div>
+  <div id="tv-scroll">
+    <div id="qlist"></div>
+    <button id="add-btn">+ Add question</button>
+  </div>
+</div>
+
 <script>
-var DATA=[
-  {t:"pos",q:"Hydrogen",a:"H\u207A",x:["Na\u207A","K\u207A","Li\u207A","Ag\u207A"]},
-  {t:"pos",q:"Sodium",a:"Na\u207A",x:["K\u207A","Li\u207A","H\u207A","Ag\u207A"]},
-  {t:"pos",q:"Potassium",a:"K\u207A",x:["Na\u207A","Li\u207A","Ag\u207A","H\u207A"]},
-  {t:"pos",q:"Silver",a:"Ag\u207A",x:["Cu\u207A","H\u207A","Na\u207A","K\u207A"]},
-  {t:"pos",q:"Copper (I)",a:"Cu\u207A",x:["Ag\u207A","Cu\u00B2\u207A","Na\u207A","K\u207A"]},
-  {t:"pos",q:"Lithium",a:"Li\u207A",x:["Na\u207A","K\u207A","H\u207A","Ag\u207A"]},
-  {t:"pos",q:"Ammonium",a:"NH\u2084\u207A",x:["Na\u207A","K\u207A","Li\u207A","H\u207A"]},
-  {t:"pos",q:"Iron (II)",a:"Fe\u00B2\u207A",x:["Fe\u00B3\u207A","Co\u00B2\u207A","Zn\u00B2\u207A","Ca\u00B2\u207A"]},
-  {t:"pos",q:"Calcium",a:"Ca\u00B2\u207A",x:["Ba\u00B2\u207A","Mg\u00B2\u207A","Fe\u00B2\u207A","Co\u00B2\u207A"]},
-  {t:"pos",q:"Barium",a:"Ba\u00B2\u207A",x:["Ca\u00B2\u207A","Mg\u00B2\u207A","Co\u00B2\u207A","Fe\u00B2\u207A"]},
-  {t:"pos",q:"Magnesium",a:"Mg\u00B2\u207A",x:["Ca\u00B2\u207A","Ba\u00B2\u207A","Zn\u00B2\u207A","Fe\u00B2\u207A"]},
-  {t:"pos",q:"Cobalt",a:"Co\u00B2\u207A",x:["Cu\u00B2\u207A","Zn\u00B2\u207A","Fe\u00B2\u207A","Ca\u00B2\u207A"]},
-  {t:"pos",q:"Zinc",a:"Zn\u00B2\u207A",x:["Co\u00B2\u207A","Cu\u00B2\u207A","Mg\u00B2\u207A","Fe\u00B2\u207A"]},
-  {t:"pos",q:"Lead (II)",a:"Pb\u00B2\u207A",x:["Sn\u00B2\u207A","Pb\u2074\u207A","Cu\u00B2\u207A","Co\u00B2\u207A"]},
-  {t:"pos",q:"Tin (II)",a:"Sn\u00B2\u207A",x:["Pb\u00B2\u207A","Sn\u2074\u207A","Zn\u00B2\u207A","Co\u00B2\u207A"]},
-  {t:"pos",q:"Copper (II)",a:"Cu\u00B2\u207A",x:["Cu\u207A","Co\u00B2\u207A","Zn\u00B2\u207A","Fe\u00B2\u207A"]},
-  {t:"pos",q:"Aluminium",a:"Al\u00B3\u207A",x:["Cr\u00B3\u207A","Fe\u00B3\u207A","Sn\u2074\u207A","Pb\u2074\u207A"]},
-  {t:"pos",q:"Chromium (III)",a:"Cr\u00B3\u207A",x:["Al\u00B3\u207A","Fe\u00B3\u207A","Co\u00B2\u207A","Sn\u2074\u207A"]},
-  {t:"pos",q:"Iron (III)",a:"Fe\u00B3\u207A",x:["Fe\u00B2\u207A","Cr\u00B3\u207A","Al\u00B3\u207A","Co\u00B2\u207A"]},
-  {t:"pos",q:"Tin (IV)",a:"Sn\u2074\u207A",x:["Sn\u00B2\u207A","Pb\u2074\u207A","Al\u00B3\u207A","Fe\u00B3\u207A"]},
-  {t:"pos",q:"Lead (IV)",a:"Pb\u2074\u207A",x:["Pb\u00B2\u207A","Sn\u2074\u207A","Cr\u00B3\u207A","Al\u00B3\u207A"]},
-  {t:"neg",q:"Fluoride",a:"F\u207B",x:["Cl\u207B","Br\u207B","I\u207B","OH\u207B"]},
-  {t:"neg",q:"Chloride",a:"Cl\u207B",x:["F\u207B","Br\u207B","I\u207B","OH\u207B"]},
-  {t:"neg",q:"Bromide",a:"Br\u207B",x:["Cl\u207B","I\u207B","F\u207B","OH\u207B"]},
-  {t:"neg",q:"Iodide",a:"I\u207B",x:["Br\u207B","Cl\u207B","F\u207B","OH\u207B"]},
-  {t:"neg",q:"Hydrogencarbonate",a:"HCO\u2083\u207B",x:["HSO\u2084\u207B","OH\u207B","NO\u2083\u207B","Cl\u207B"]},
-  {t:"neg",q:"Hydrogensulfate",a:"HSO\u2084\u207B",x:["HCO\u2083\u207B","OH\u207B","NO\u2083\u207B","Cl\u207B"]},
-  {t:"neg",q:"Hydroxide",a:"OH\u207B",x:["HCO\u2083\u207B","NO\u2083\u207B","F\u207B","Cl\u207B"]},
-  {t:"neg",q:"Ethanoate",a:"CH\u2083COO\u207B",x:["OH\u207B","NO\u2083\u207B","HCO\u2083\u207B","Cl\u207B"]},
-  {t:"neg",q:"Nitrate",a:"NO\u2083\u207B",x:["OH\u207B","HCO\u2083\u207B","HSO\u2084\u207B","Cl\u207B"]},
-  {t:"neg",q:"Oxide",a:"O\u00B2\u207B",x:["S\u00B2\u207B","SO\u2083\u00B2\u207B","CO\u2083\u00B2\u207B","N\u00B3\u207B"]},
-  {t:"neg",q:"Sulfide",a:"S\u00B2\u207B",x:["O\u00B2\u207B","SO\u2084\u00B2\u207B","CO\u2083\u00B2\u207B","N\u00B3\u207B"]},
-  {t:"neg",q:"Sulfite",a:"SO\u2083\u00B2\u207B",x:["SO\u2084\u00B2\u207B","S\u00B2\u207B","CO\u2083\u00B2\u207B","O\u00B2\u207B"]},
-  {t:"neg",q:"Sulfate",a:"SO\u2084\u00B2\u207B",x:["SO\u2083\u00B2\u207B","CO\u2083\u00B2\u207B","S\u00B2\u207B","O\u00B2\u207B"]},
-  {t:"neg",q:"Carbonate",a:"CO\u2083\u00B2\u207B",x:["SO\u2084\u00B2\u207B","SO\u2083\u00B2\u207B","PO\u2084\u00B3\u207B","S\u00B2\u207B"]},
-  {t:"neg",q:"Nitride",a:"N\u00B3\u207B",x:["P\u00B3\u207B","O\u00B2\u207B","S\u00B2\u207B","CO\u2083\u00B2\u207B"]},
-  {t:"neg",q:"Phosphide",a:"P\u00B3\u207B",x:["N\u00B3\u207B","O\u00B2\u207B","PO\u2084\u00B3\u207B","CO\u2083\u00B2\u207B"]},
-  {t:"neg",q:"Phosphate",a:"PO\u2084\u00B3\u207B",x:["CO\u2083\u00B2\u207B","SO\u2084\u00B2\u207B","P\u00B3\u207B","N\u00B3\u207B"]},
-  {t:"con",q:"What happens when a positive ion forms?",a:"Electrons are lost",x:["Electrons are gained","Protons are lost","Neutrons are shared","Electrons are shared"]},
-  {t:"con",q:"What happens when a negative ion forms?",a:"Electrons are gained",x:["Electrons are lost","Protons are gained","Neutrons are lost","Electrons are shared"]},
-  {t:"con",q:"Why are noble gases unreactive?",a:"Their outer energy level is full",x:["They have no electrons","They have too many protons","They are too large","They repel all atoms"]},
-  {t:"con",q:"Metals tend to form… ions",a:"Positive",x:["Negative","Neutral","Covalent","Metallic"]},
-  {t:"con",q:"Non-metals tend to form… ions",a:"Negative",x:["Positive","Neutral","Covalent","Metallic"]},
-  {t:"con",q:"In an ionic compound, the overall charge is always…",a:"Zero (neutral)",x:["Positive","Negative","Equal to the cation","Variable"]},
-  {t:"con",q:"The charge on an ion is called its…",a:"Valency",x:["Valence","Charge number","Electron count","Atomic number"]},
-  {t:"con",q:"When a non-metal becomes an ion the name ending becomes…",a:"-ide (e.g. fluoride)",x:["-ate","-ite","-ium","-ous"]},
-  {t:"form",q:"Formula for sodium chloride",a:"NaCl"},
-  {t:"form",q:"Formula for calcium chloride",a:"CaCl2"},
-  {t:"form",q:"Formula for magnesium oxide",a:"MgO"},
-  {t:"form",q:"Formula for aluminium oxide",a:"Al2O3"},
-  {t:"form",q:"Formula for sodium hydroxide",a:"NaOH"},
-  {t:"form",q:"Formula for calcium carbonate",a:"CaCO3"},
-  {t:"form",q:"Formula for potassium nitrate",a:"KNO3"},
-  {t:"form",q:"Formula for zinc sulfate",a:"ZnSO4"},
+// ── level definitions ──
+// Each card has a .lv property (1–5)
+// 1 = Positive ions +1 and +2
+// 2 = Positive +3/4, Negative -1
+// 3 = Negative -2/3
+// 4 = Ion theory, electron config, periodic table, valence electrons
+// 5 = Formula writing
+
+var LEVEL_INFO=[
+  null, // index 0 unused
+  {emoji:"⭐",title:"Ion Symbols — Positive",unlock:"Level 2 unlocked: Negative ions & more positive ions!"},
+  {emoji:"🌟",title:"More Ions",unlock:"Level 3 unlocked: Complex negative ions!"},
+  {emoji:"💫",title:"Complex Ions",unlock:"Level 4 unlocked: Ion theory & electron configuration!"},
+  {emoji:"🔬",title:"Ion Theory & Electron Config",unlock:"Level 5 unlocked: Formula writing!"},
+  {emoji:"🏆",title:"Formula Writing",unlock:"You've completed all levels!"},
 ];
 
-var deck=[],weak=[],cur=null,done=false;
-var C=0,W=0,streak=0,xp=0,lv=1,sxp=0;
+var DEFAULT_DATA=[
+  // ── LEVEL 1: Positive +1 ──
+  {lv:1,t:"pos",q:"Hydrogen",a:"H\u207A",x:["Na\u207A","K\u207A","Li\u207A","Ag\u207A"],note:""},
+  {lv:1,t:"pos",q:"Sodium",a:"Na\u207A",x:["K\u207A","Li\u207A","H\u207A","Ag\u207A"],note:""},
+  {lv:1,t:"pos",q:"Potassium",a:"K\u207A",x:["Na\u207A","Li\u207A","Ag\u207A","H\u207A"],note:""},
+  {lv:1,t:"pos",q:"Silver",a:"Ag\u207A",x:["Cu\u207A","H\u207A","Na\u207A","K\u207A"],note:""},
+  {lv:1,t:"pos",q:"Copper (I)",a:"Cu\u207A",x:["Ag\u207A","Cu\u00B2\u207A","Na\u207A","K\u207A"],note:"Copper has two valencies: Cu\u207A (Copper I) and Cu\u00B2\u207A (Copper II)."},
+  {lv:1,t:"pos",q:"Lithium",a:"Li\u207A",x:["Na\u207A","K\u207A","H\u207A","Ag\u207A"],note:""},
+  {lv:1,t:"pos",q:"Ammonium",a:"NH\u2084\u207A",x:["Na\u207A","K\u207A","Li\u207A","H\u207A"],note:"Ammonium is a polyatomic ion — it's a group of atoms with a overall +1 charge."},
+  // Positive +2
+  {lv:1,t:"pos",q:"Iron (II)",a:"Fe\u00B2\u207A",x:["Fe\u00B3\u207A","Co\u00B2\u207A","Zn\u00B2\u207A","Ca\u00B2\u207A"],note:"Iron can have two different valencies: Fe\u00B2\u207A (Iron II) and Fe\u00B3\u207A (Iron III). The roman numerals tell you which one."},
+  {lv:1,t:"pos",q:"Calcium",a:"Ca\u00B2\u207A",x:["Ba\u00B2\u207A","Mg\u00B2\u207A","Fe\u00B2\u207A","Co\u00B2\u207A"],note:""},
+  {lv:1,t:"pos",q:"Barium",a:"Ba\u00B2\u207A",x:["Ca\u00B2\u207A","Mg\u00B2\u207A","Co\u00B2\u207A","Fe\u00B2\u207A"],note:""},
+  {lv:1,t:"pos",q:"Magnesium",a:"Mg\u00B2\u207A",x:["Ca\u00B2\u207A","Ba\u00B2\u207A","Zn\u00B2\u207A","Fe\u00B2\u207A"],note:""},
+  {lv:1,t:"pos",q:"Cobalt",a:"Co\u00B2\u207A",x:["Cu\u00B2\u207A","Zn\u00B2\u207A","Fe\u00B2\u207A","Ca\u00B2\u207A"],note:""},
+  {lv:1,t:"pos",q:"Zinc",a:"Zn\u00B2\u207A",x:["Co\u00B2\u207A","Cu\u00B2\u207A","Mg\u00B2\u207A","Fe\u00B2\u207A"],note:""},
+  {lv:1,t:"pos",q:"Lead (II)",a:"Pb\u00B2\u207A",x:["Sn\u00B2\u207A","Pb\u2074\u207A","Cu\u00B2\u207A","Co\u00B2\u207A"],note:"Lead has two valencies: Pb\u00B2\u207A (Lead II) and Pb\u2074\u207A (Lead IV)."},
+  {lv:1,t:"pos",q:"Tin (II)",a:"Sn\u00B2\u207A",x:["Pb\u00B2\u207A","Sn\u2074\u207A","Zn\u00B2\u207A","Co\u00B2\u207A"],note:"Tin has two valencies: Sn\u00B2\u207A (Tin II) and Sn\u2074\u207A (Tin IV)."},
+  {lv:1,t:"pos",q:"Copper (II)",a:"Cu\u00B2\u207A",x:["Cu\u207A","Co\u00B2\u207A","Zn\u00B2\u207A","Fe\u00B2\u207A"],note:"Copper has two valencies: Cu\u207A (Copper I) and Cu\u00B2\u207A (Copper II)."},
+
+  // ── LEVEL 2: Positive +3/4 + Negative -1 ──
+  {lv:2,t:"pos",q:"Aluminium",a:"Al\u00B3\u207A",x:["Cr\u00B3\u207A","Fe\u00B3\u207A","Sn\u2074\u207A","Pb\u2074\u207A"],note:""},
+  {lv:2,t:"pos",q:"Chromium (III)",a:"Cr\u00B3\u207A",x:["Al\u00B3\u207A","Fe\u00B3\u207A","Co\u00B2\u207A","Sn\u2074\u207A"],note:""},
+  {lv:2,t:"pos",q:"Iron (III)",a:"Fe\u00B3\u207A",x:["Fe\u00B2\u207A","Cr\u00B3\u207A","Al\u00B3\u207A","Co\u00B2\u207A"],note:"Iron can have two different valencies: Fe\u00B2\u207A (Iron II) and Fe\u00B3\u207A (Iron III)."},
+  {lv:2,t:"pos",q:"Tin (IV)",a:"Sn\u2074\u207A",x:["Sn\u00B2\u207A","Pb\u2074\u207A","Al\u00B3\u207A","Fe\u00B3\u207A"],note:""},
+  {lv:2,t:"pos",q:"Lead (IV)",a:"Pb\u2074\u207A",x:["Pb\u00B2\u207A","Sn\u2074\u207A","Cr\u00B3\u207A","Al\u00B3\u207A"],note:""},
+  {lv:2,t:"neg",q:"Fluoride",a:"F\u207B",x:["Cl\u207B","Br\u207B","I\u207B","OH\u207B"],note:""},
+  {lv:2,t:"neg",q:"Chloride",a:"Cl\u207B",x:["F\u207B","Br\u207B","I\u207B","OH\u207B"],note:""},
+  {lv:2,t:"neg",q:"Bromide",a:"Br\u207B",x:["Cl\u207B","I\u207B","F\u207B","OH\u207B"],note:""},
+  {lv:2,t:"neg",q:"Iodide",a:"I\u207B",x:["Br\u207B","Cl\u207B","F\u207B","OH\u207B"],note:""},
+  {lv:2,t:"neg",q:"Hydrogencarbonate",a:"HCO\u2083\u207B",x:["HSO\u2084\u207B","OH\u207B","NO\u2083\u207B","Cl\u207B"],note:""},
+  {lv:2,t:"neg",q:"Hydrogensulfate",a:"HSO\u2084\u207B",x:["HCO\u2083\u207B","OH\u207B","NO\u2083\u207B","Cl\u207B"],note:""},
+  {lv:2,t:"neg",q:"Hydroxide",a:"OH\u207B",x:["HCO\u2083\u207B","NO\u2083\u207B","F\u207B","Cl\u207B"],note:""},
+  {lv:2,t:"neg",q:"Ethanoate",a:"CH\u2083COO\u207B",x:["OH\u207B","NO\u2083\u207B","HCO\u2083\u207B","Cl\u207B"],note:""},
+  {lv:2,t:"neg",q:"Nitrate",a:"NO\u2083\u207B",x:["OH\u207B","HCO\u2083\u207B","HSO\u2084\u207B","Cl\u207B"],note:""},
+
+  // ── LEVEL 3: Negative -2/3 ──
+  {lv:3,t:"neg",q:"Oxide",a:"O\u00B2\u207B",x:["S\u00B2\u207B","SO\u2083\u00B2\u207B","CO\u2083\u00B2\u207B","N\u00B3\u207B"],note:""},
+  {lv:3,t:"neg",q:"Sulfide",a:"S\u00B2\u207B",x:["O\u00B2\u207B","SO\u2084\u00B2\u207B","CO\u2083\u00B2\u207B","N\u00B3\u207B"],note:""},
+  {lv:3,t:"neg",q:"Sulfite",a:"SO\u2083\u00B2\u207B",x:["SO\u2084\u00B2\u207B","S\u00B2\u207B","CO\u2083\u00B2\u207B","O\u00B2\u207B"],note:"Don't confuse sulfite (SO\u2083\u00B2\u207B) with sulfate (SO\u2084\u00B2\u207B) — sulfite has one fewer oxygen."},
+  {lv:3,t:"neg",q:"Sulfate",a:"SO\u2084\u00B2\u207B",x:["SO\u2083\u00B2\u207B","CO\u2083\u00B2\u207B","S\u00B2\u207B","O\u00B2\u207B"],note:"Don't confuse sulfate (SO\u2084\u00B2\u207B) with sulfite (SO\u2083\u00B2\u207B) — sulfate has one more oxygen."},
+  {lv:3,t:"neg",q:"Carbonate",a:"CO\u2083\u00B2\u207B",x:["SO\u2084\u00B2\u207B","SO\u2083\u00B2\u207B","PO\u2084\u00B3\u207B","S\u00B2\u207B"],note:""},
+  {lv:3,t:"neg",q:"Nitride",a:"N\u00B3\u207B",x:["P\u00B3\u207B","O\u00B2\u207B","S\u00B2\u207B","CO\u2083\u00B2\u207B"],note:""},
+  {lv:3,t:"neg",q:"Phosphide",a:"P\u00B3\u207B",x:["N\u00B3\u207B","O\u00B2\u207B","PO\u2084\u00B3\u207B","CO\u2083\u00B2\u207B"],note:""},
+  {lv:3,t:"neg",q:"Phosphate",a:"PO\u2084\u00B3\u207B",x:["CO\u2083\u00B2\u207B","SO\u2084\u00B2\u207B","P\u00B3\u207B","N\u00B3\u207B"],note:""},
+
+  // ── LEVEL 4: Ion theory, electron config, valence electrons, periodic table ──
+  {lv:4,t:"con",q:"What happens when a positive ion forms?",a:"Electrons are lost",x:["Electrons are gained","Protons are lost","Neutrons are shared","Electrons are shared"],note:"Positive ions (cations) form when an atom loses electrons. Fewer electrons than protons = net positive charge."},
+  {lv:4,t:"con",q:"What happens when a negative ion forms?",a:"Electrons are gained",x:["Electrons are lost","Protons are gained","Neutrons are lost","Electrons are shared"],note:"Negative ions (anions) form when an atom gains electrons. More electrons than protons = net negative charge."},
+  {lv:4,t:"con",q:"Why are noble gases unreactive?",a:"Their outer energy level is full",x:["They have no electrons","They have too many protons","They are too large","They repel all atoms"],note:"Noble gases have 8 electrons in their outer shell (helium has 2). This full outer shell makes them very stable."},
+  {lv:4,t:"con",q:"Metals tend to form… ions",a:"Positive",x:["Negative","Neutral","Covalent","Metallic"],note:"Metals are on the left of the periodic table. They lose electrons easily, forming positive ions (cations)."},
+  {lv:4,t:"con",q:"Non-metals tend to form… ions",a:"Negative",x:["Positive","Neutral","Covalent","Metallic"],note:"Non-metals are on the right of the periodic table. They gain electrons easily, forming negative ions (anions)."},
+  {lv:4,t:"con",q:"In an ionic compound, the overall charge is always…",a:"Zero (neutral)",x:["Positive","Negative","Equal to the cation","Variable"],note:"The positive and negative charges always balance out. E.g. NaCl: Na\u207A and Cl\u207B cancel to give zero."},
+  {lv:4,t:"con",q:"The charge on an ion is called its…",a:"Valency",x:["Valence","Charge number","Electron count","Atomic number"],note:"Valency refers to the charge of an ion. It tells you how many electrons were gained or lost."},
+  {lv:4,t:"con",q:"When a non-metal becomes an ion the name ending becomes…",a:"-ide (e.g. fluoride)",x:["-ate","-ite","-ium","-ous"],note:"Simple non-metal ions end in -ide. E.g. fluorine \u2192 fluoride, oxygen \u2192 oxide. Polyatomic ions like sulfate end in -ate or -ite."},
+  {lv:4,t:"con",q:"How many electrons can the first energy level hold?",a:"2",x:["8","4","6"],note:"The first shell can only hold a maximum of 2 electrons. This is why helium (2) is a noble gas."},
+  {lv:4,t:"con",q:"How many electrons can the second energy level hold?",a:"8",x:["2","4","6"],note:"The second shell holds up to 8 electrons. Once full, electrons begin filling the third shell."},
+  {lv:4,t:"con",q:"What is the electron configuration of sodium (Na, atomic number 11)?",a:"2, 8, 1",x:["2, 9","2, 8, 3","2, 8, 2"],note:"Sodium has 11 electrons: 2 in the first shell, 8 in the second, and 1 in the outer shell."},
+  {lv:4,t:"con",q:"What is the electron configuration of oxygen (O, atomic number 8)?",a:"2, 6",x:["2, 8","2, 4","2, 7"],note:"Oxygen has 8 electrons: 2 in the first shell and 6 in the second. It needs 2 more to fill its outer shell."},
+  {lv:4,t:"con",q:"What is the electron configuration of chlorine (Cl, atomic number 17)?",a:"2, 8, 7",x:["2, 8, 8","2, 7","2, 8, 1"],note:"Chlorine has 17 electrons: 2, 8, 7. It needs just 1 more electron to complete its outer shell, forming Cl\u207B."},
+  {lv:4,t:"con",q:"What is the electron configuration of magnesium (Mg, atomic number 12)?",a:"2, 8, 2",x:["2, 8, 1","2, 10","2, 8, 3"],note:"Magnesium has 12 electrons: 2, 8, 2. It loses its 2 outer electrons to form Mg\u00B2\u207A."},
+  {lv:4,t:"con",q:"What is the electron configuration of fluorine (F, atomic number 9)?",a:"2, 7",x:["2, 8","2, 6","2, 9"],note:"Fluorine has 9 electrons: 2, 7. It gains 1 electron to fill its outer shell, forming F\u207B."},
+  {lv:4,t:"con",q:"What is the electron configuration of neon (Ne, atomic number 10)?",a:"2, 8",x:["2, 6","2, 10","2, 7"],note:"Neon has 10 electrons: 2, 8. Its outer shell is full — completely stable and unreactive."},
+  {lv:4,t:"con",q:"What is the electron configuration of argon (Ar, atomic number 18)?",a:"2, 8, 8",x:["2, 8, 7","2, 8, 10","2, 8, 2"],note:"Argon has 18 electrons: 2, 8, 8. Its outer shell is full — a noble gas."},
+  {lv:4,t:"con",q:"What is the electron configuration of calcium (Ca, atomic number 20)?",a:"2, 8, 8, 2",x:["2, 8, 10","2, 8, 8, 1","2, 8, 2"],note:"Calcium has 20 electrons: 2, 8, 8, 2. It loses its 2 outer electrons to form Ca\u00B2\u207A."},
+  {lv:4,t:"con",q:"How many valence electrons does nitrogen (N) have?",a:"5",x:["3","6","7"],note:"Nitrogen is in Group 15. It has 5 valence electrons and needs 3 more to fill its outer shell, forming N\u00B3\u207B."},
+  {lv:4,t:"con",q:"How many valence electrons does potassium (K) have?",a:"1",x:["2","7","8"],note:"Potassium is in Group 1. It has 1 valence electron, which it loses easily to form K\u207A."},
+  {lv:4,t:"con",q:"How many valence electrons does oxygen (O) have?",a:"6",x:["2","4","8"],note:"Oxygen is in Group 16. It has 6 valence electrons and gains 2 to form O\u00B2\u207B (oxide)."},
+  {lv:4,t:"con",q:"How many valence electrons does bromine (Br) have?",a:"7",x:["1","5","6"],note:"Bromine is in Group 17 (halogens). It has 7 valence electrons and gains 1 to form Br\u207B."},
+  {lv:4,t:"con",q:"Sodium (2,8,1) loses 1 electron. What ion forms?",a:"Na\u207A",x:["Na\u207B","Na\u00B2\u207A","Na\u00B2\u207B"],note:"Losing 1 electron leaves sodium with more protons than electrons — net charge of +1."},
+  {lv:4,t:"con",q:"Oxygen (2,6) gains 2 electrons. What ion forms?",a:"O\u00B2\u207B",x:["O\u207B","O\u00B2\u207A","O\u00B3\u207B"],note:"Gaining 2 electrons gives oxygen the same config as neon (2,8) — net charge of -2."},
+  {lv:4,t:"con",q:"Chlorine (2,8,7) gains 1 electron. What ion forms?",a:"Cl\u207B",x:["Cl\u207A","Cl\u00B2\u207B","Cl\u00B2\u207A"],note:"Gaining 1 electron gives chlorine the same config as argon (2,8,8) — net charge of -1."},
+  {lv:4,t:"con",q:"Which noble gas does Na\u207A have the same electron configuration as?",a:"Neon (Ne)",x:["Helium (He)","Argon (Ar)","Krypton (Kr)"],note:"Na\u207A has 10 electrons (2,8) — same as neon. Ions are stable when they match the nearest noble gas."},
+  {lv:4,t:"con",q:"Which noble gas does Cl\u207B have the same electron configuration as?",a:"Argon (Ar)",x:["Neon (Ne)","Krypton (Kr)","Helium (He)"],note:"Cl\u207B has 18 electrons (2,8,8) — same as argon."},
+  {lv:4,t:"con",q:"An ion has 11 protons and 10 electrons. What is its charge?",a:"+1",x:["-1","+2","-2"],note:"More protons than electrons = positive charge. 11 - 10 = +1. This is Na\u207A."},
+  {lv:4,t:"con",q:"An ion has 8 protons and 10 electrons. What is its charge?",a:"-2",x:["+2","-1","+1"],note:"More electrons than protons = negative charge. 10 - 8 = 2 extra electrons = -2. This is O\u00B2\u207B."},
+  {lv:4,t:"con",q:"Elements in Group 1 typically form ions with a charge of…",a:"+1",x:["-1","+2","+3"],note:"Group 1 metals (Li, Na, K) all have 1 valence electron. They lose it to form +1 ions."},
+  {lv:4,t:"con",q:"Elements in Group 2 typically form ions with a charge of…",a:"+2",x:["-2","+1","+3"],note:"Group 2 metals (Mg, Ca, Ba) all have 2 valence electrons. They lose both to form +2 ions."},
+  {lv:4,t:"con",q:"Elements in Group 17 typically form ions with a charge of…",a:"-1",x:["+1","-2","-3"],note:"Group 17 halogens (F, Cl, Br, I) have 7 valence electrons and gain 1, forming -1 ions."},
+  {lv:4,t:"con",q:"What is the name given to Group 18 elements?",a:"Noble gases",x:["Halogens","Alkali metals","Transition metals"],note:"Group 18 = noble gases (He, Ne, Ar, Kr, Xe, Rn). Inert because their outer shells are completely full."},
+  {lv:4,t:"con",q:"What does the period number tell you about an atom?",a:"The number of electron shells (energy levels)",x:["The number of valence electrons","The number of protons","The atomic mass"],note:"The period number = the number of occupied electron shells. E.g. sodium is in Period 3: 2, 8, 1."},
+  {lv:4,t:"con",q:"Atoms react to achieve the electron configuration of the nearest…",a:"Noble gas",x:["Metal","Transition element","Alkali metal"],note:"Atoms gain or lose electrons to match the stable full-shell configuration of the nearest noble gas."},
+  {lv:4,t:"con",q:"Why do atoms gain or lose electrons rather than protons?",a:"Electrons are on the outer shell and easily transferred; protons are locked in the nucleus",x:["Protons are too heavy","Electrons are negatively charged","Neutrons block the protons"],note:"Protons are bound tightly in the nucleus — chemical reactions only involve the outer electrons."},
+
+  // ── LEVEL 5: Formula writing ──
+  {lv:5,t:"form",q:"Formula for sodium chloride",a:"NaCl",note:"Na\u207A + Cl\u207B \u2192 NaCl. Charges cancel: +1 and -1."},
+  {lv:5,t:"form",q:"Formula for calcium chloride",a:"CaCl2",note:"Ca\u00B2\u207A + 2Cl\u207B \u2192 CaCl\u2082. Need 2 chloride to balance the 2+ charge."},
+  {lv:5,t:"form",q:"Formula for magnesium oxide",a:"MgO",note:"Mg\u00B2\u207A + O\u00B2\u207B \u2192 MgO. Both have charge 2, so one of each."},
+  {lv:5,t:"form",q:"Formula for aluminium oxide",a:"Al2O3",note:"2Al\u00B3\u207A + 3O\u00B2\u207B \u2192 Al\u2082O\u2083. Swap the valency numbers: 2 aluminium and 3 oxide."},
+  {lv:5,t:"form",q:"Formula for sodium hydroxide",a:"NaOH",note:"Na\u207A + OH\u207B \u2192 NaOH. Both have charge 1."},
+  {lv:5,t:"form",q:"Formula for calcium carbonate",a:"CaCO3",note:"Ca\u00B2\u207A + CO\u2083\u00B2\u207B \u2192 CaCO\u2083. Both have charge 2, one of each."},
+  {lv:5,t:"form",q:"Formula for potassium nitrate",a:"KNO3",note:"K\u207A + NO\u2083\u207B \u2192 KNO\u2083. Both have charge 1."},
+  {lv:5,t:"form",q:"Formula for zinc sulfate",a:"ZnSO4",note:"Zn\u00B2\u207A + SO\u2084\u00B2\u207B \u2192 ZnSO\u2084. Both have charge 2."},
+  {lv:5,t:"form",q:"Formula for lithium fluoride",a:"LiF",note:"Li\u207A + F\u207B \u2192 LiF. Both +1 and -1."},
+  {lv:5,t:"form",q:"Formula for magnesium chloride",a:"MgCl2",note:"Mg\u00B2\u207A + 2Cl\u207B \u2192 MgCl\u2082. Need 2 chloride to balance Ba\u00B2\u207A."},
+  {lv:5,t:"form",q:"Formula for aluminium chloride",a:"AlCl3",note:"Al\u00B3\u207A + 3Cl\u207B \u2192 AlCl\u2083. Need 3 chloride to balance the 3+ charge."},
+  {lv:5,t:"form",q:"Formula for potassium oxide",a:"K2O",note:"2K\u207A + O\u00B2\u207B \u2192 K\u2082O. Need 2 potassium (+2 total) to balance the -2 oxide."},
+  {lv:5,t:"form",q:"Formula for sodium sulfate",a:"Na2SO4",note:"2Na\u207A + SO\u2084\u00B2\u207B \u2192 Na\u2082SO\u2084. Two sodium ions balance the sulfate (-2)."},
+  {lv:5,t:"form",q:"Formula for iron(II) chloride",a:"FeCl2",note:"Fe\u00B2\u207A + 2Cl\u207B \u2192 FeCl\u2082. The (II) tells you iron has a +2 charge here."},
+  {lv:5,t:"form",q:"Formula for iron(III) chloride",a:"FeCl3",note:"Fe\u00B3\u207A + 3Cl\u207B \u2192 FeCl\u2083. The (III) tells you iron has a +3 charge here."},
+  {lv:5,t:"form",q:"Formula for copper(II) oxide",a:"CuO",note:"Cu\u00B2\u207A + O\u00B2\u207B \u2192 CuO. Both have charge 2, one of each."},
+  {lv:5,t:"form",q:"Formula for silver nitrate",a:"AgNO3",note:"Ag\u207A + NO\u2083\u207B \u2192 AgNO\u2083. Both have charge 1."},
+  {lv:5,t:"form",q:"Formula for barium chloride",a:"BaCl2",note:"Ba\u00B2\u207A + 2Cl\u207B \u2192 BaCl\u2082. Need 2 chloride to balance Ba\u00B2\u207A."},
+  {lv:5,t:"form",q:"Formula for ammonium chloride",a:"NH4Cl",note:"NH\u2084\u207A + Cl\u207B \u2192 NH\u2084Cl. Both have charge 1."},
+  {lv:5,t:"form",q:"Formula for sodium carbonate",a:"Na2CO3",note:"2Na\u207A + CO\u2083\u00B2\u207B \u2192 Na\u2082CO\u2083. Need 2 sodium to balance the -2 carbonate."},
+  {lv:5,t:"form",q:"Formula for calcium nitrate",a:"Ca(NO3)2",note:"Ca\u00B2\u207A + 2NO\u2083\u207B \u2192 Ca(NO\u2083)\u2082. Brackets used because there are 2 whole NO\u2083 groups."},
+  {lv:5,t:"form",q:"Formula for magnesium nitrate",a:"Mg(NO3)2",note:"Mg\u00B2\u207A + 2NO\u2083\u207B \u2192 Mg(NO\u2083)\u2082. Need 2 nitrate to balance the +2 magnesium."},
+  {lv:5,t:"form",q:"Formula for potassium sulfate",a:"K2SO4",note:"2K\u207A + SO\u2084\u00B2\u207B \u2192 K\u2082SO\u2084. Need 2 potassium to balance the -2 sulfate."},
+  {lv:5,t:"form",q:"Formula for lithium oxide",a:"Li2O",note:"2Li\u207A + O\u00B2\u207B \u2192 Li\u2082O. Need 2 lithium (+2 total) to balance oxygen (-2)."},
+  {lv:5,t:"form",q:"Formula for magnesium sulfate",a:"MgSO4",note:"Mg\u00B2\u207A + SO\u2084\u00B2\u207B \u2192 MgSO\u2084. Both have charge 2."},
+  {lv:5,t:"form",q:"Formula for calcium sulfate",a:"CaSO4",note:"Ca\u00B2\u207A + SO\u2084\u00B2\u207B \u2192 CaSO\u2084. Both have charge 2."},
+  {lv:5,t:"form",q:"Formula for sodium nitrate",a:"NaNO3",note:"Na\u207A + NO\u2083\u207B \u2192 NaNO\u2083. Both have charge 1."},
+];
+
+var DATA=DEFAULT_DATA.map(function(d){return JSON.parse(JSON.stringify(d));});
+
+// ── game state ──
+var currentLevel=1;
+var MAX_LEVEL=5;
+var deck=[],weak=[],cur=null,answered=false;
+var C=0,W=0,streak=0,xp=0,lvXP=0; // lvXP = XP earned this level
+var totalC=0,totalW=0,totalXP=0;
 
 function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 
-function start(){
-  deck=shuf(DATA.slice());
-  weak=[];C=0;W=0;streak=0;sxp=0;
-  document.getElementById("done").style.display="none";
+function cardsForLevel(lv){return DATA.filter(function(d){return d.lv===lv;});}
+
+function startLevel(lv){
+  currentLevel=lv;
+  deck=shuf(cardsForLevel(lv).slice());
+  weak=[];C=0;W=0;streak=0;lvXP=0;
+  hideAll();
   document.getElementById("qhead").style.display="block";
   document.getElementById("grid").style.display="grid";
   document.getElementById("frow").style.display="flex";
   document.getElementById("stats").style.display="flex";
   document.getElementById("retry-bar").style.display="none";
   document.getElementById("finput").style.display="none";
-  updateStats();
+  updateBar();updateStats();
   next();
 }
 
+function hideAll(){
+  document.getElementById("qhead").style.display="none";
+  document.getElementById("grid").style.display="none";
+  document.getElementById("finput").style.display="none";
+  document.getElementById("frow").style.display="none";
+  document.getElementById("stats").style.display="none";
+  document.getElementById("level-summary").style.display="none";
+  document.getElementById("done").style.display="none";
+}
+
 function next(){
-  done=false;
+  answered=false;
   document.getElementById("nxt").style.display="none";
   document.getElementById("fb").textContent="";
   document.getElementById("fb").className="";
+  document.getElementById("fnote").style.display="none";
+  document.getElementById("fnote").textContent="";
 
-  if(!deck.length&&!weak.length){finish();return;}
-  if(!deck.length){deck=shuf(weak.slice());weak=[];document.getElementById("retry-bar").style.display="block";}
+  if(!deck.length&&!weak.length){showLevelSummary();return;}
+  if(!deck.length){
+    deck=shuf(weak.slice());weak=[];
+    document.getElementById("retry-bar").style.display="block";
+  }
 
-  cur=deck.shift();
-  updateProg();
-
+  cur=deck.shift();updateProg();
   var bmap={pos:"bpos positive ion",neg:"bneg negative ion",con:"bcon ion theory",form:"bform formula writing"};
-  var bp=bmap[cur.t].split(" ");
+  var bp=(bmap[cur.t]||"bcon theory").split(" ");
   var badge=document.getElementById("badge");
   badge.className=bp[0];badge.textContent=bp.slice(1).join(" ");
 
@@ -208,6 +397,9 @@ function next(){
   else{var ns=Math.random()<0.5;qt=ns?cur.q:cur.a;qs=ns?"What is the symbol?":"What is the name?";cur._flip=!ns;}
   document.getElementById("qtext").textContent=qt;
   document.getElementById("qsub").textContent=qs;
+  document.getElementById("qhead").style.display="block";
+  document.getElementById("frow").style.display="flex";
+  document.getElementById("stats").style.display="flex";
 
   if(cur.t==="form"){
     document.getElementById("grid").style.display="none";
@@ -237,15 +429,19 @@ function next(){
   }
 }
 
+function showNote(){
+  if(cur.note&&cur.note.trim()){
+    var fn=document.getElementById("fnote");
+    fn.textContent=cur.note;fn.style.display="block";
+  }
+}
+
 function bindOpts(correct){
   for(var i=0;i<4;i++){
     (function(el){
       var newEl=el.cloneNode(true);
       el.parentNode.replaceChild(newEl,el);
-      function handle(e){
-        if(e.type==="touchend")e.preventDefault();
-        pick(newEl,newEl.dataset.val,correct);
-      }
+      function handle(e){if(e.type==="touchend")e.preventDefault();pick(newEl,newEl.dataset.val,correct);}
       newEl.addEventListener("touchend",handle,{passive:false});
       newEl.addEventListener("click",handle);
     })(document.getElementById("o"+i));
@@ -253,7 +449,7 @@ function bindOpts(correct){
 }
 
 function pick(el,chosen,correct){
-  if(done)return;done=true;
+  if(answered)return;answered=true;
   for(var i=0;i<4;i++){
     var t=document.getElementById("o"+i);
     if(t.dataset.val===correct)t.classList.add("show");
@@ -261,36 +457,36 @@ function pick(el,chosen,correct){
   var fb=document.getElementById("fb");
   if(chosen===correct){
     el.classList.add("ok");el.classList.remove("show");
-    C++;streak++;var bonus=streak>=3?5:0;xp+=15+bonus;sxp+=15+bonus;
+    C++;totalC++;streak++;
+    var bonus=streak>=3?5:0;xp+=15+bonus;lvXP+=15+bonus;totalXP+=15+bonus;
     fb.textContent=streak>=3?"✓ "+streak+" streak! +"+(15+bonus)+" XP":"✓ Correct!";
-    fb.className="ok";lvCheck();
+    fb.className="fbok";
   } else {
-    el.classList.add("bad");
-    W++;streak=0;weak.push(cur);
-    fb.textContent="✗ Answer: "+correct;fb.className="bad";
+    el.classList.add("bad");W++;totalW++;streak=0;weak.push(cur);
+    fb.textContent="✗ Answer: "+correct;fb.className="fbbad";
   }
-  updateStats();
+  showNote();updateStats();updateBar();
   document.getElementById("nxt").style.display="block";
 }
 
 function checkFormula(){
-  if(done)return;
+  if(answered)return;
   var fi=document.getElementById("fanswer");
   var raw=fi.value.trim();if(!raw)return;
-  done=true;fi.disabled=true;document.getElementById("fcheck").disabled=true;
+  answered=true;fi.disabled=true;document.getElementById("fcheck").disabled=true;
   function norm(s){return s.replace(/[\u2070-\u2079\u00B2\u00B3\u00B9]/g,function(c){return"0123456789"["\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079".indexOf(c)];}).replace(/\s/g,"");}
-  var normAnswer=norm(cur.a);
-  var normRaw=norm(raw);
-  var caseOk=normRaw===normAnswer;
-  var ok=normRaw.toLowerCase()===normAnswer.toLowerCase();
+  var ok=norm(raw).toLowerCase()===norm(cur.a).toLowerCase();
   var fb=document.getElementById("fb");
-  if(caseOk){fi.className="ok";C++;streak++;xp+=20;sxp+=20;fb.textContent="✓ Correct!";fb.className="ok";lvCheck();}
-  else if(ok){fi.className="bad";W++;streak=0;weak.push(cur);fb.textContent="✗ Check capitalisation — answer: "+cur.a;fb.className="bad";}
-  else{fi.className="bad";W++;streak=0;weak.push(cur);fb.textContent="✗ Answer: "+cur.a;fb.className="bad";}
-  updateStats();document.getElementById("nxt").style.display="block";
+  if(ok){fi.className="ok";C++;totalC++;streak++;xp+=20;lvXP+=20;totalXP+=20;fb.textContent="✓ Correct!";fb.className="fbok";}
+  else{fi.className="bad";W++;totalW++;streak=0;weak.push(cur);fb.textContent="✗ Answer: "+cur.a;fb.className="fbbad";}
+  showNote();updateStats();updateBar();
+  document.getElementById("nxt").style.display="block";
 }
 
-function lvCheck(){while(xp>=lv*100){xp-=lv*100;lv++;}document.getElementById("lv").textContent="Lv "+lv+" · "+xp+" XP";}
+function updateBar(){
+  // level display
+  document.getElementById("lv").textContent="Level "+currentLevel+" / "+MAX_LEVEL;
+}
 function updateStats(){
   document.getElementById("sc").textContent=C;
   document.getElementById("sr").textContent=weak.length;
@@ -298,51 +494,164 @@ function updateStats(){
   var tot=C+W;document.getElementById("sa").textContent=tot?Math.round(C/tot*100)+"%":"—";
 }
 function updateProg(){
-  var tot=C+W+deck.length+1;
-  document.getElementById("prog").style.width=Math.round((C+W)/tot*100)+"%";
+  var total=C+W+deck.length+weak.length+1;
+  document.getElementById("prog").style.width=Math.round((C+W)/total*100)+"%";
 }
-function finish(){
-  document.getElementById("qhead").style.display="none";
-  document.getElementById("grid").style.display="none";
-  document.getElementById("finput").style.display="none";
-  document.getElementById("frow").style.display="none";
-  document.getElementById("stats").style.display="none";
-  document.getElementById("done").style.display="flex";
+
+function showLevelSummary(){
+  hideAll();
+  document.getElementById("retry-bar").style.display="none";
+  var info=LEVEL_INFO[currentLevel];
   var tot=C+W;
-  document.getElementById("dc1").textContent=C;
-  document.getElementById("dc2").textContent=W;
-  document.getElementById("dc3").textContent=tot?Math.round(C/tot*100)+"%":"—";
-  document.getElementById("dc4").textContent=sxp;
-  document.getElementById("dsub").textContent="Level "+lv+" · "+tot+" cards";
-  var dr=document.getElementById("d-retry");
-  dr.style.display=weak.length?"block":"none";
-  if(weak.length)dr.textContent="Retry "+weak.length+" missed card"+(weak.length>1?"s":"");
+  document.getElementById("ls-emoji").textContent=info.emoji;
+  document.getElementById("ls-tag").textContent="Level "+currentLevel+" Complete!";
+  document.getElementById("ls-title").textContent=info.title;
+  document.getElementById("ls-c").textContent=C;
+  document.getElementById("ls-w").textContent=W;
+  document.getElementById("ls-acc").textContent=tot?Math.round(C/tot*100)+"%":"—";
+  document.getElementById("ls-xp").textContent=lvXP;
+  var nextBtn=document.getElementById("ls-next");
+  var retryBtn=document.getElementById("ls-retry");
+  if(currentLevel>=MAX_LEVEL){
+    document.getElementById("ls-unlock").textContent=info.unlock;
+    nextBtn.textContent="See final results 🏆";
+  } else {
+    document.getElementById("ls-unlock").textContent=info.unlock;
+    nextBtn.textContent="Start Level "+(currentLevel+1)+" →";
+  }
+  document.getElementById("prog").style.width="100%";
+  document.getElementById("level-summary").style.display="flex";
+}
+
+function showFinalDone(){
+  hideAll();
+  document.getElementById("done").style.display="flex";
+  var tot=totalC+totalW;
+  document.getElementById("dc1").textContent=totalC;
+  document.getElementById("dc2").textContent=totalW;
+  document.getElementById("dc3").textContent=tot?Math.round(totalC/tot*100)+"%":"—";
+  document.getElementById("dc4").textContent=totalXP;
+  document.getElementById("dsub").textContent="All "+MAX_LEVEL+" levels cleared!";
   document.getElementById("prog").style.width="100%";
 }
 
-// wire buttons — both touchend and click
+wire("nxt",next);
+wire("fcheck",checkFormula);
+wire("ls-next",function(){
+  if(currentLevel>=MAX_LEVEL){showFinalDone();}
+  else{startLevel(currentLevel+1);}
+});
+wire("ls-retry",function(){startLevel(currentLevel);});
+wire("d-again",function(){totalC=0;totalW=0;totalXP=0;xp=0;startLevel(1);});
+document.getElementById("fanswer").addEventListener("keydown",function(e){if(e.key==="Enter")checkFormula();});
+
+// ── teacher editor ──
+wire("teacher-toggle",function(){
+  var tv=document.getElementById("teacher-view");
+  if(tv.style.display==="flex"){showQuiz();}else{showTeacher();}
+});
+function showQuiz(){
+  document.getElementById("quiz-view").style.display="flex";
+  document.getElementById("teacher-view").style.display="none";
+}
+function showTeacher(){
+  document.getElementById("quiz-view").style.display="none";
+  document.getElementById("teacher-view").style.display="flex";
+  renderEditor();
+}
+wire("tv-save",function(){DATA=DEFAULT_DATA.map(function(d){return JSON.parse(JSON.stringify(d));});showQuiz();totalC=0;totalW=0;totalXP=0;xp=0;startLevel(1);});
+wire("tv-cancel",showQuiz);
+
+var TYPES=["pos","neg","con","form"];
+var TYPE_LABELS={"pos":"Positive ion","neg":"Negative ion","con":"Ion theory","form":"Formula"};
+var LV_LABELS={1:"Lv 1",2:"Lv 2",3:"Lv 3",4:"Lv 4",5:"Lv 5"};
+
+function renderEditor(){
+  var list=document.getElementById("qlist");list.innerHTML="";
+  DATA.forEach(function(d,i){renderCard(d,i,list);});
+}
+
+function renderCard(d,i,list){
+  var wrap=document.createElement("div");wrap.className="qcard";
+  var hdr=document.createElement("div");hdr.className="qcard-header";
+  hdr.innerHTML='<span class="qcard-num">Q'+(i+1)+'</span><span class="qcard-preview">'+escHtml(d.q)+'</span><span class="qcard-lv">Lv '+d.lv+'</span><button class="qcard-del">Delete</button>';
+  wrap.appendChild(hdr);
+  var body=document.createElement("div");body.className="qcard-body";
+
+  // level pills
+  var lb=document.createElement("div");lb.innerHTML='<div class="field-label">Level</div>';
+  var lps=document.createElement("div");lps.className="lv-pills";
+  [1,2,3,4,5].forEach(function(n){
+    var p=document.createElement("div");p.className="lv-pill"+(d.lv===n?" active":"");
+    p.textContent="Level "+n;
+    p.addEventListener("click",function(){d.lv=n;lps.querySelectorAll(".lv-pill").forEach(function(x){x.classList.remove("active");});p.classList.add("active");hdr.querySelector(".qcard-lv").textContent="Lv "+n;});
+    lps.appendChild(p);
+  });
+  lb.appendChild(lps);body.appendChild(lb);
+
+  // type pills
+  var tb=document.createElement("div");tb.innerHTML='<div class="field-label">Type</div>';
+  var tps=document.createElement("div");tps.className="type-pills";
+  TYPES.forEach(function(tp){
+    var p=document.createElement("div");p.className="type-pill"+(d.t===tp?" active":"");
+    p.textContent=TYPE_LABELS[tp];
+    p.addEventListener("click",function(){d.t=tp;tps.querySelectorAll(".type-pill").forEach(function(x){x.classList.remove("active");});p.classList.add("active");});
+    tps.appendChild(p);
+  });
+  tb.appendChild(tps);body.appendChild(tb);
+
+  body.appendChild(makeField("Question / term",d.q,function(v){d.q=v;hdr.querySelector(".qcard-preview").textContent=v;}));
+  body.appendChild(makeField("Correct answer",d.a,function(v){d.a=v;}));
+
+  var ob=document.createElement("div");ob.innerHTML='<div class="field-label" style="margin-bottom:6px">Wrong options (3)</div>';
+  var og=document.createElement("div");og.className="opts-grid";
+  for(var j=0;j<3;j++){(function(j){
+    var ow=document.createElement("div");ow.className="opt-wrap";
+    var lbl=document.createElement("div");lbl.className="field-label";lbl.textContent="Option "+(j+1);
+    var inp=document.createElement("input");inp.className="field-input";inp.type="text";inp.value=d.x&&d.x[j]||"";
+    inp.addEventListener("input",function(){if(!d.x)d.x=[];d.x[j]=inp.value;});
+    ow.appendChild(lbl);ow.appendChild(inp);og.appendChild(ow);
+  })(j);}
+  ob.appendChild(og);body.appendChild(ob);
+  body.appendChild(makeTextarea("Explanation note",d.note||"",function(v){d.note=v;}));
+  wrap.appendChild(body);
+
+  hdr.addEventListener("click",function(e){if(e.target.classList.contains("qcard-del"))return;body.classList.toggle("open");});
+  hdr.querySelector(".qcard-del").addEventListener("click",function(e){e.stopPropagation();if(confirm("Delete this question?")){DATA.splice(i,1);renderEditor();}});
+  list.appendChild(wrap);
+}
+
+function makeField(label,val,onChange){
+  var w=document.createElement("div");
+  var l=document.createElement("div");l.className="field-label";l.textContent=label;
+  var inp=document.createElement("input");inp.className="field-input";inp.type="text";inp.value=val;
+  inp.addEventListener("input",function(){onChange(inp.value);});
+  w.appendChild(l);w.appendChild(inp);return w;
+}
+function makeTextarea(label,val,onChange){
+  var w=document.createElement("div");
+  var l=document.createElement("div");l.className="field-label";l.textContent=label;
+  var ta=document.createElement("textarea");ta.className="field-input";ta.value=val;ta.rows=3;
+  ta.addEventListener("input",function(){onChange(ta.value);});
+  w.appendChild(l);w.appendChild(ta);return w;
+}
+
+wire("add-btn",function(){
+  DATA.push({lv:1,t:"con",q:"New question",a:"Correct answer",x:["Wrong 1","Wrong 2","Wrong 3"],note:""});
+  renderEditor();
+  var cards=document.querySelectorAll(".qcard-body");
+  if(cards.length)cards[cards.length-1].classList.add("open");
+  document.getElementById("tv-scroll").scrollTop=999999;
+});
+
+function escHtml(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function wire(id,fn){
-  var el=document.getElementById(id);
+  var el=document.getElementById(id);if(!el)return;
   el.addEventListener("touchend",function(e){e.preventDefault();fn();},{passive:false});
   el.addEventListener("click",fn);
 }
-wire("nxt",next);
-wire("fcheck",checkFormula);
-wire("d-again",start);
-wire("d-retry",function(){
-  deck=shuf(weak.slice());weak=[];
-  document.getElementById("done").style.display="none";
-  document.getElementById("qhead").style.display="block";
-  document.getElementById("grid").style.display="grid";
-  document.getElementById("frow").style.display="flex";
-  document.getElementById("stats").style.display="flex";
-  document.getElementById("retry-bar").style.display="block";
-  document.getElementById("finput").style.display="none";
-  next();
-});
-document.getElementById("fanswer").addEventListener("keydown",function(e){if(e.key==="Enter")checkFormula();});
 
-start();
+startLevel(1);
 </script>
 </body>
 </html>
